@@ -1,0 +1,147 @@
+@startuml
+title TEMP? transaction
+
+caption  Host (uartctl.py) ↔ Gateway (STM32 + nRF24) ↔ Remote (STM32 + nRF24)
+
+skinparam shadowing false
+skinparam ArrowColor #444444
+skinparam ArrowThickness 1.2
+
+skinparam activity {
+  BorderColor #444444
+  FontColor #222222
+  BackgroundColor #f8f8f8
+}
+
+|Host|
+start
+:Open serial port;
+:UART TX "TEMP?\n";
+
+:Wait for 1 line (host timeout);
+
+
+|Gateway|
+:UART RX until '\n';
+if (line == "TEMP?") then (yes)
+else (no)
+  :UART TX "ERR\n";
+  |Host|
+  :Read "ERR";
+  :Host reports bad response;
+  stop
+endif
+
+|Gateway|
+:Prepare RF req "GTMP";
+:nrf_enter_tx_clean();
+:nrf_write_payload32();
+:CE pulse;
+
+' ---- TX wait (<=100 ms) ----
+:tx_done = 0;
+:tx_maxrt = 0;
+
+while (elapsed < 100 ms? and tx_done == 0 and tx_maxrt == 0) is (yes)
+  :st = STATUS;
+  if (TX_DS?) then (yes)
+    :clear IRQs;\nread OBSERVE_TX;
+    :tx_done = 1;
+  else (no)
+    if (MAX_RT?) then (yes)
+      :clear IRQs;\nread OBSERVE_TX;
+      :flush TX;\nenter RX clean;
+      :tx_maxrt = 1;
+    endif
+  endif
+endwhile
+
+|Gateway|
+if (tx_maxrt == 1) then (MAX_RT)
+  :UART TX "TEMP FAIL rc=-1 ...\n";
+  |Host|
+  :Read line "TEMP FAIL ...";
+  :Host prints/returns error;
+  stop
+endif
+
+|Gateway|
+if (tx_done == 0) then (TXWAIT)
+  :clear IRQs;\nflush TX;\nenter RX clean;
+  :UART TX "TEMP FAIL rc=-3 ...\n";
+  |Host|
+  :Read line "TEMP FAIL ...";
+  :Host prints/returns error;
+  stop
+endif
+
+' ---- RX wait (<=200 ms) ----
+|Gateway|
+:nrf_enter_rx_clean();
+:got_tmp = 0;
+
+fork
+  ' Branch 1: Gateway waits
+  |Gateway|
+  while (elapsed < 200 ms? and got_tmp == 0) is (yes)
+    while (nrf_rx_available? and got_tmp == 0) is (yes)
+      :read_payload32();
+      :clear IRQs;
+      if (hdr == "TMP!") then (yes)
+        :got_tmp = 1;
+      else (no)
+        :drain unexpected payload;
+      endif
+    endwhile
+  endwhile
+
+fork again
+  ' Branch 2: Remote processes request and replies
+  |Remote|
+  :Remote already in RX mode, polling each loop;
+  while (nrf_rx_available?) is (yes)
+    :read_payload32();
+    :clear IRQs;
+    if (hdr == "GTMP") then (yes)
+      :Compose "TMP!" reply;
+      :nrf_send_reply32(...);
+    else (other)
+      :Ignore / other command;
+    endif
+  endwhile
+end fork
+
+|Gateway|
+if (got_tmp == 0) then (RX timeout)
+  :read RPD;
+  :UART TX "TEMP FAIL rc=-2 ...\n";
+  |Host|
+  :Read line "TEMP FAIL ...";
+  :Host prints/returns error;
+  stop
+endif
+
+|Gateway|
+:Unpack TMP! fields;
+:UART TX "TEMP ADC0=.. ADC1=.. T0=.. T1=.. age=.. flags=..\n";
+
+
+|Host|
+:Read response line;
+if (line starts with "TEMP ") then (yes)
+  :parse_temp_line();
+  if (parse OK?) then (yes)
+    if (--json?) then (yes)
+      :emit JSON;
+    else (no)
+      :print human output;
+    endif
+  else (no)
+    :Host parse error;
+  endif
+else (no)
+  :Host bad response;
+endif
+stop
+
+@enduml

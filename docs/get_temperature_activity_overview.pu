@@ -1,0 +1,82 @@
+@startuml
+
+title TEMP? request overview
+
+caption  Host (uartctl.py) ↔ Gateway (STM32 + nRF24) ↔ Remote (STM32 + nRF24)
+
+skinparam shadowing false
+skinparam ArrowColor #444444
+skinparam ArrowThickness 1.2
+
+skinparam activity {
+  BorderColor #444444
+  FontColor #222222
+  BackgroundColor #f8f8f8
+}
+
+|Host|
+start
+:Open serial port;
+:UART TX "TEMP?\n";
+
+|Gateway|
+:UART RX line;
+if (line == "TEMP?") then (yes)
+else (no)
+  :UART TX "ERR\n";
+  |Host|
+  :Report error;
+  stop
+endif
+
+|Gateway|
+:RF request "GTMP";
+:TX phase (send request);
+if (TX ok?) then (yes)
+else (no)
+  :UART TX "TEMP FAIL (TX)\n";
+  |Host|
+  :Report error;
+  stop
+endif
+
+|Gateway|
+:Enter RX wait for "TMP!";
+
+fork
+  |Gateway|
+  :RX wait (<=200 ms);\naccept only "TMP!";
+fork again
+  |Remote|
+  :Receive "GTMP";
+  :Build "TMP!" reply;
+  :Send reply;
+end fork
+
+|Gateway|
+if (Got "TMP!"?) then (no)
+  :UART TX "TEMP FAIL (RX timeout)\n";
+  |Host|
+  :Report error;
+  stop
+else (yes)
+  |Gateway|
+  :Unpack temps;
+  :UART TX "TEMP ...\n";
+endif
+
+|Host|
+:Read response line;
+if (Starts with "TEMP "?) then (yes)
+  :Parse key=value;
+  if (--json?) then (yes)
+    :Emit JSON;
+  else (no)
+    :Print human summary;
+  endif
+else (no)
+  :Report failure or bad response;
+endif
+stop
+
+@enduml
