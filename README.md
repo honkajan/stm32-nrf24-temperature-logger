@@ -20,6 +20,11 @@ The following diagram illustrates the high-level request flow.
 
 ![TEMP request overview](docs/get_temperature_activity_overview.svg)
 
+*Overview of the TEMP? transaction path between host, gateway and remote node.*
+
+A more detailed implementation-level flow diagram is available in
+[docs/get_temperature_activity_detailed.svg](docs/get_temperature_activity_detailed.svg).
+
 ## Remote Measurement Node – Hardware Overview
 
 The remote node consists of:
