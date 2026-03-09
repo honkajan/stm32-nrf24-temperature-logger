@@ -18,12 +18,12 @@ The most common transaction is the `TEMP?` command, where the host requests temp
 
 The following diagram illustrates the high-level request flow.
 
-![TEMP request overview](docs/get_temperature_activity_overview.svg)
+![TEMP request overview](docs/diagrams/get_temperature_activity_overview.svg)
 
 *Overview of the TEMP? transaction path between host, gateway and remote node.*
 
 A more detailed implementation-level flow diagram is available in
-[docs/get_temperature_activity_detailed.svg](docs/get_temperature_activity_detailed.svg).
+[docs/diagrams/get_temperature_activity_detailed.svg](docs/diagrams/get_temperature_activity_detailed.svg).
 
 ## Remote Measurement Node – Hardware Overview
 
@@ -37,8 +37,8 @@ The remote node consists of:
 
 ## Remote Node – Hardware Schematic (Rev A)
 
-![Remote Node Schematic](docs/remote_node_schematic_revA.svg)
+![Remote Node Schematic](docs/hardware/exports/remote_node_schematic_revA.svg)
 
-PDF version available here:
-[Download schematic (PDF)](docs/remote_node_schematic_revA.pdf)
+PDF version:
+[Download schematic (PDF)](docs/hardware/exports/remote_node_schematic_revA.pdf)
 
