@@ -35,10 +35,17 @@ The remote node consists of:
 - USB-powered carrier board
 - Plug-in interconnect harness (semi-permanent)
 
-## Remote Node – Hardware Schematic (Rev A)
+## Remote Node – Hardware Schematic (RevB)
 
-![Remote Node Schematic](docs/hardware/exports/remote_node_schematic_revA.svg)
+![Remote Node Schematic (RevB)](docs/hardware/exports/remote_node_schematic_revB.svg)
 
-PDF version:
-[Download schematic (PDF)](docs/hardware/exports/remote_node_schematic_revA.pdf)
+*Remote node schematic (RevB) with optimized ADC front-end filtering.*
+
+**RevB updates:**
+- Reduced ADC front-end RC filter (470 µF → 10 µF)
+- Improved startup settling time (~20 s → ~3 s)
+
+[Download schematic (PDF)](docs/hardware/exports/remote_node_schematic_revB.pdf)
+
+> See [docs/hardware/README.md](docs/hardware/README.md) for full revision history.
 

@@ -6,10 +6,10 @@
 	(paper "A4")
 	(title_block
 		(title "STM32 nRF24 Temperature Logger – Remote Node")
-		(date "2026-02-11")
-		(rev "A")
+		(date "2026-03-17")
+		(rev "B")
 		(company "Jani Honkanen")
-		(comment 1 "Remote measurement node – Rev A prototype")
+		(comment 1 "Remote measurement node – Rev B prototype")
 	)
 	(lib_symbols
 		(symbol "Connector:USB_B_Micro"
@@ -2967,10 +2967,10 @@
 	)
 	(text "Single-sheet functional schematic.\nPin mapping reflects firmware configuration."
 		(exclude_from_sim no)
-		(at 21.844 190.246 0)
+		(at 19.304 175.006 0)
 		(effects
 			(font
-				(size 0.762 0.762)
+				(size 0.889 0.889)
 			)
 			(justify left)
 		)
@@ -3190,6 +3190,18 @@
 			)
 		)
 		(uuid "4ac2f59f-2822-4cc2-bd9b-173d023a7a22")
+	)
+	(text "Revision History\n-------------------------------\nRev  Date        Description\nA    2026-02-11  Initial version\nB    2026-03-17  Reduce ADC RC filter (470 µF → 10 µF) to improve startup settling"
+		(exclude_from_sim no)
+		(at 19.812 186.944 0)
+		(effects
+			(font
+				(face "Consolas")
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4be456c8-ad03-4d1a-a24d-e0e38b5638ff")
 	)
 	(text "2x4 2.54mm Male Header\nMates with nRF breakout header\n(electrically parallel to J3)\n\n"
 		(exclude_from_sim no)
@@ -3476,7 +3488,7 @@
 	)
 	(text "DESIGN NOTES:\n- Carrier board provides parallel breakout headers for all module socket pins.\n- Breakout headers used for Dupont wiring and prototyping."
 		(exclude_from_sim no)
-		(at 67.31 189.23 0)
+		(at 19.304 165.862 0)
 		(effects
 			(font
 				(size 0.889 0.889)
@@ -6815,7 +6827,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "470u"
+		(property "Value" "10u"
 			(at 99.06 56.2609 0)
 			(effects
 				(font
@@ -7160,7 +7172,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "470u"
+		(property "Value" "10u"
 			(at 222.25 56.2609 0)
 			(effects
 				(font
@@ -7309,7 +7321,7 @@
 				)
 			)
 		)
-		(property "Value" "220"
+		(property "Value" "10k"
 			(at 88.9 45.72 90)
 			(effects
 				(font
@@ -8046,7 +8058,7 @@
 				)
 			)
 		)
-		(property "Value" "220"
+		(property "Value" "10k"
 			(at 212.09 45.72 90)
 			(effects
 				(font
