@@ -25,6 +25,20 @@ The following diagram illustrates the high-level request flow.
 A more detailed implementation-level flow diagram is available in
 [docs/diagrams/get_temperature_activity_detailed.svg](docs/diagrams/get_temperature_activity_detailed.svg).
 
+
+## Repositories
+
+The system is implemented as a set of focused repositories:
+
+- **uartctl** – host-side Python CLI tool for interacting with the system  
+  [https://github.com/honkajan/uartctl](https://github.com/honkajan/uartctl)
+
+- **gateway-fw** – STM32 firmware for the UART-to-nRF24 gateway node  
+  [https://github.com/honkajan/gateway-fw](https://github.com/honkajan/gateway-fw)
+
+- **remote-fw** – STM32 firmware for the remote temperature measurement node  
+  [https://github.com/honkajan/remote-fw](https://github.com/honkajan/remote-fw)
+
 ## Remote Measurement Node – Hardware Overview
 
 The remote node consists of:
